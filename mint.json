@@ -33,29 +33,14 @@
     {
       "name": "TC API Reference",
       "url": "api-reference-tc"
+    },
+    {
+      "name": "TC API",
+      "url": "tc-api"
     }
   ],
   "anchors": [],
   "navigation": [
-    {
-      "group": "Get Started",
-      "pages": [
-        "introduction",
-        "quickstart",
-        "development"
-      ]
-    },
-    {
-      "group": "Essentials",
-      "pages": [
-        "essentials/markdown",
-        "essentials/code",
-        "essentials/images",
-        "essentials/settings",
-        "essentials/navigation",
-        "essentials/reusable-snippets"
-      ]
-    },
     {
       "group": "API Documentation",
       "pages": [
@@ -63,9 +48,29 @@
       ]
     },
     {
-      "group": "TC API Documentation",
+      "group": "API Documentation",
       "pages": [
-        "api-reference-tc/introduction"
+        "tc-api/introduction"
+      ]
+    },
+    {
+      "group": "Endpoints",
+      "pages": [
+        "tc-api/endpoint/me",
+        {
+          "group": "Campaigns",
+          "pages": [
+            "tc-api/endpoint/campaigns/list",
+            "tc-api/endpoint/campaigns/get"
+          ]
+        },
+        {
+          "group": "Sessions",
+          "pages": [
+            "tc-api/endpoint/sessions/list",
+            "tc-api/endpoint/sessions/get"
+          ]
+        }
       ]
     },
     {

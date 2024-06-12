@@ -1,0 +1,576 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "TC Api",
+    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
+    "license": {
+      "name": "MIT"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://454c-82-78-22-111.ngrok-free.app/api"
+    }
+  ],
+  "security": [
+    {
+      "apiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/me": {
+      "get": {
+        "description": "Returns the info about the team that owns the api_key",
+        "responses": {
+          "200": {
+            "description": "Me response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/schemas/BadReqResponse"
+          },
+          "401": {
+            "$ref": "#/components/schemas/UnauthorizedResponse"
+          }
+        }
+      }
+    },
+    "/campaigns": {
+      "get": {
+        "description": "Retrieves a paginated list of campaigns belonging to the team identified by the provided API key. The response includes campaign details and pagination information.",
+        "parameters": [
+          {"$ref": "#/components/parameters/PageSizeParam"},
+          {"$ref": "#/components/parameters/PageTokenParam"}
+        ],
+        "responses": {
+          "200": {
+            "description": "Campaigns listing response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampaignPaginationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/schemas/NotFoundResponse"
+          },
+          "401": {
+            "$ref": "#/components/schemas/UnauthorizedResponse"
+          }
+        }
+      }
+    },
+    "/campaigns/{id}": {
+      "get": {
+        "description": "Retrieves details of a specific campaign identified by its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the campaign to retrieve.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Campaign details response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampaignResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/schemas/BadReqResponse"
+          },
+          "401": {
+            "$ref": "#/components/schemas/UnauthorizedResponse"
+          },
+          "404": {
+            "$ref": "#/components/schemas/NotFoundResponse"
+          }
+        }
+      }
+    },
+    "/sessions": {
+      "get": {
+        "description": "Retrieves a paginated list of sessions.",
+        "parameters": [
+          {"$ref": "#/components/parameters/PageSizeParam"},
+          {"$ref": "#/components/parameters/PageTokenParam"}
+        ],
+        "responses": {
+          "200": {
+            "description": "Sessions listing response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionListingResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/schemas/BadReqResponse"
+          },
+          "401": {
+            "$ref": "#/components/schemas/UnauthorizedResponse"
+          }
+        }
+      }
+    },
+    "/sessions/{id}": {
+      "get": {
+        "description": "Retrieves details of a session by its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the session to retrieve.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Session details response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionDetailsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/schemas/BadReqResponse"
+          },
+          "401": {
+            "$ref": "#/components/schemas/UnauthorizedResponse"
+          },
+          "404": {
+            "$ref": "#/components/schemas/NotFoundResponse"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SuccessStatus": {
+        "type": "string",
+        "enum": ["success"],
+        "example": "success"
+      },
+      "ErrorStatus": {
+        "type": "string",
+        "enum": ["success", "error"],
+        "example": "error"
+      },
+      "OwnerSnippet": {
+        "type": "object",
+        "properties": {
+          "first_name": {
+            "type": "string",
+            "description": "first_name of team owner"
+          },
+          "last_name": {
+            "type": "string",
+            "description": "last_name of team owner"
+          },
+          "email": {
+            "type": "string",
+            "description": "email address of team owner"
+          }
+        }
+      },
+      "TeamSnippet": {
+        "type": "object",
+        "properties": {
+          "team": {
+            "type": "object",
+            "description": "details about the owner of this api_key",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "name of the team"
+              },
+              "owner": {
+                "$ref": "#/components/schemas/OwnerSnippet"
+              }
+            }
+          }
+        }
+      },
+      "CreatedAt": {
+        "type": "number",
+        "description": "timestamp representation of when this item was created",
+        "example": 1718104009000
+      },
+      "CampaignListSnippet": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "id of the campaign"
+          },
+          "api_key": {
+            "type": "string",
+            "description": "api_key of the campaign"
+          },
+          "name": {
+            "type": "string",
+            "description": "name of the campaign"
+          },
+          "created_at": {
+            "$ref": "#/components/schemas/CreatedAt"
+          }
+        }
+      },
+      "CampaignDetailSnippet": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "id of the campaign"
+          },
+          "api_key": {
+            "type": "string",
+            "description": "api_key associated with the campaign"
+          },
+          "name": {
+            "type": "string",
+            "description": "name of the campaign"
+          },
+          "created_at": {
+            "$ref": "#/components/schemas/CreatedAt"
+          },
+          "sources_config": {
+            "type": "object",
+            "description": "allow / block sources configuration of the campaign",
+            "properties": {
+              "allow": {
+                "type": "array",
+                "nullable": true,
+                "description": "list all the allowed sources this campaign allows (if applicable)",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "block": {
+                "type": "array",
+                "nullable": true,
+                "description": "list all the blocked sources this campaign allows (if applicable)",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "allow_all": {
+                "type": "boolean",
+                "description": "true = allow any source",
+                "nullable": true
+              }
+            }
+          }
+        }
+      },
+      "PaginationSnippet": {
+        "type": "object",
+        "properties": {
+          "has_next_page": {
+            "type": "boolean",
+            "description": "Indicates whether there are more pages available after the current page."
+          },
+          "next_page_token": {
+            "type": "string",
+            "description": "Token to fetch the next page of results, if available."
+          }
+        },
+        "description": "Pagination information"
+      },
+      "CampaignPaginationResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/SuccessStatus"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CampaignListSnippet"
+                },
+                "description": "List of campaign snippets"
+              },
+              "pagination": {
+                "$ref": "#/components/schemas/PaginationSnippet"
+              }
+            }
+          }
+        }
+      },
+      "CampaignResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/SuccessStatus"
+          },
+          "data": {
+            "$ref": "#/components/schemas/CampaignDetailSnippet"
+          }
+        }
+      },
+      "SessionListSnippet": {
+        "type": "object",
+        "properties": {
+          "tc_id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "source_url": {
+            "type": "string"
+          },
+          "generator_id": {
+            "type": "string"
+          }
+        }
+      },
+      "SessionDetailsSnippet": {
+        "type": "object",
+        "properties": {
+          "tc_id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "source_url": {
+            "type": "string"
+          },
+          "generator_id": {
+            "type": "string"
+          },
+          "details": {
+            "type": "object",
+            "properties": {
+              "ip_v4": {
+                "type": "string"
+              },
+              "ip_v6": {
+                "type": "string"
+              },
+              "ip_data": {
+                "type": "object",
+                "properties": {
+                  "v6": {
+                    "type": "object"
+                  },
+                  "v4": {
+                    "type": "object",
+                    "properties": {
+                      "country": {
+                        "type": "string"
+                      },
+                      "flag": {
+                        "type": "string"
+                      },
+                      "city": {
+                        "type": "string"
+                      },
+                      "ip": {
+                        "type": "string"
+                      },
+                      "is_datacenter": {
+                        "type": "boolean"
+                      },
+                      "is_tor": {
+                        "type": "boolean"
+                      },
+                      "autonomous_system_organization": {
+                        "type": "string"
+                      },
+                      "autonomous_system_number": {
+                        "type": "integer"
+                      },
+                      "is_vpn": {
+                        "type": "boolean"
+                      },
+                      "is_in_european_union": {
+                        "type": "boolean"
+                      },
+                      "is_bot": {
+                        "type": "boolean"
+                      },
+                      "iso_code": {
+                        "type": "string"
+                      },
+                      "is_proxy": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              },
+              "device_model": {
+                "type": "string"
+              },
+              "device_vendor": {
+                "type": "string"
+              },
+              "user_agent": {
+                "type": "string"
+              },
+              "os_name": {
+                "type": "string"
+              },
+              "os_version": {
+                "type": "string"
+              },
+              "browser_name": {
+                "type": "string"
+              },
+              "browser_version": {
+                "type": "string"
+              },
+              "timezone": {
+                "type": "integer"
+              },
+              "adblock": {
+                "type": "boolean"
+              },
+              "do_not_track": {
+                "type": "boolean"
+              },
+              "fingerprint_hash": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "SessionListingResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/SuccessStatus"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/SessionListSnippet"
+                }
+              },
+              "pagination": {
+                "$ref": "#/components/schemas/PaginationSnippet"
+              }
+            }
+          }
+        }
+      },
+      "SessionDetailsResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/SuccessStatus"
+          },
+          "data": {
+            "$ref": "#/components/schemas/SessionDetailsSnippet"
+          }
+        }
+      },
+      "ErrorSchema": {
+        "required": [
+          "error",
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/ErrorStatus"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "MeResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/SuccessStatus"
+          },
+          "data": {
+            "$ref": "#/components/schemas/TeamSnippet"
+          }
+        }
+      },
+      "BadReqResponse": {
+        "$ref": "#/components/schemas/ErrorSchema"
+      },
+      "NotFoundResponse": {
+        "$ref": "#/components/schemas/ErrorSchema"
+      },
+      "UnauthorizedResponse": {
+        "$ref": "#/components/schemas/ErrorSchema"
+      }
+    },
+    "parameters": {
+      "PageSizeParam": {
+        "name": "page_size",
+        "in": "query",
+        "description": "Number of items per page (1-100).",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "PageTokenParam": {
+        "name": "page_token",
+        "in": "query",
+        "description": "Token to fetch the next page of results, if available.",
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "ApiKey"
+      },
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "Use 'ApiKey <api_key>' format for the Authorization header"
+      }
+    }
+  }
+}
